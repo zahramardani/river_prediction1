@@ -1,0 +1,914 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Multistep Bootstrap Form</title>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    body {
+      margin-top: 50px;
+      font-family: Arial, sans-serif;
+    }
+  
+    
+
+
+
+
+
+    .form-container {
+      max-width: 950px;
+      margin: 0 auto;
+      border: 1px solid #ccc;
+      padding: 20px;
+    }
+  
+    .progress-container {
+      border-top: 1px solid #ccc;
+      padding-top: 10px;
+      margin-top: 20px;
+    }
+  
+    .step {
+      display: none;
+    }
+  
+    .step.active {
+      display: block;
+    }
+  
+    .nav-link {
+      font-weight: bold;
+    }
+  
+  
+  
+    #table_wrapper {
+      margin-top: 20px;
+    }
+  
+    #table_container {
+      margin-top: 10px;
+    }
+
+    
+
+img {
+    vertical-align: middle;
+    border-style: none;
+    width: 470px;
+}
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="form-container">
+      <ul class="nav nav-pills mb-3" id="step-bar">
+        <li class="nav-item">
+          <a class="nav-link active" href="#" data-step="0">Step 1</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#" data-step="1">Step 2</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#" data-step="2">Step3(Preprocessing)</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#" data-step="3">Step 4(Train)</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#" data-step="4">Step 5(Predection)</a>
+        </li>
+      </ul>
+
+      <form id="multistep-form" method="POST" action="{% url 'prediction_form' %}">
+        {% csrf_token %}
+
+        <div class="step active" data-step="0">
+          <div class="form-group">
+            <label for="name">Deployment Name:</label>
+            <input id='step1_name' type="text" name="name" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label for="deployment_type">Deployment Type:</label>
+            <select id='step1_deployment_type' name="deployment_type" class="form-control" required>
+              <option value="1">Time series</option>
+              <option value="2">Others</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="application_field">Application Field:</label>
+            <input id='step1_application_field' type="text" name="application_field" class="form-control" required>
+          </div>
+          <button class="btn btn-primary next-step">Next</button>
+        </div>
+
+        <div class="step" data-step="1">
+          <div id="loading_status" class="alert alert-warning" style="display:none"></div>
+
+          <div class="form-group">
+            <label for="input_stations" style="font-weight: bold; color: rgb(40, 40, 33);"><strong>Input Stations:</strong> </label>
+            <!--<button id="add_input_station_button" type="button" class="btn btn-secondary">Add Input Station</button>-->
+            <p>Select one or more input stations from the list above. To select more than one, hold CTRL key.</p>
+            <div id="input_stations_container">
+              <select id="f_estacoes_input" name="f_estacoes_input" size="7" multiple="multiple" class="form-control" style="visibility: visible;">
+                <option value="1627743352" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ ABRANTES LOPO (17H/04H)</font></font></option>
+                <option value="1627743380" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ AGROAL (15G/02H)</font></font></option>
+                <option value="1627743458" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ ALBUFEIRA DA APARTADURA (17M/01A)</font></font></option>
+                <option value="1627743562" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ ALBUFEIRA DA BOUÇÃ (RE) (14H/01A)</font></font></option>
+                <option value="1627743678" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ ALBUFEIRA DA CAPINHA (12M/01A)</font></font></option>
+                <option value="1627751888" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ ALBUFEIRA DA COVA DO VIRIATO (12L/02A)</font></font></option>
+                <option value="1627759292" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ ALBUFEIRA DA PRACANA (RE) (16K/01A)</font></font></option>
+                <option value="1627759474" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ ALBUFEIRA DA TOULICA (14O/01A)</font></font></option>
+                <option value="1627743544" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ ALBUFEIRA DE BELVER (RE) (17J/01A)</font></font></option>
+                <option value="1627743896" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ ALBUFEIRA DE CASTELO DE BODE (RE) (16H/01A)</font></font></option>
+                <option value="1627751876" style="background-color:#ffffff">■ ALBUFEIRA DE CORGAS (15J/01A)</option>
+                <option value="1627751890" style="background-color:#ffffff">■ ALBUFEIRA DE COVÃO DO FERRO (12L/01AE)</option>
+                <option value="1627751892" style="background-color:#ffffff">■ ALBUFEIRA DE COVÃO DO MEIO (R.E.) (13L/01AE)</option>
+                <option value="1627752558" style="background-color:#ffffff">■ ALBUFEIRA DE ESCARIGO (12N/01AE)</option>
+                <option value="1627758676" style="background-color:#ffffff">■ ALBUFEIRA DE GAFETE (17L/03A)</option>
+                <option value="1627758730" style="background-color:#ffffff">■ ALBUFEIRA DE IDANHA (14N/01A)</option>
+                <option value="1627758756" style="background-color:#ffffff">■ ALBUFEIRA DE MAGOS (20E/01A)</option>
+                <option value="1627758774" style="background-color:#ffffff">■ ALBUFEIRA DE MEIMOA (12O/01A)</option>
+                <option value="1627758784" style="background-color:#ffffff">■ ALBUFEIRA DE MINUTOS (R.E.) (22I/01A)</option>
+                <option value="1627758816" style="background-color:#ffffff">■ ALBUFEIRA DE MONTARGIL (19H/01A)</option>
+                <option value="1627758874" style="background-color:#ffffff">■ ALBUFEIRA DE NASCENTES (18K/02A)</option>
+                <option value="1627758936" style="background-color:#ffffff">■ ALBUFEIRA DE PATUDOS (18F/03A)</option>
+                <option value="1627758954" style="background-color:#ffffff">■ ALBUFEIRA DE PENHA GARCIA (13O/01A)</option>
+                <option value="1627759290" style="background-color:#ffffff">■ ALBUFEIRA DE PÓVOA E MEADAS (R.E.) (17L/01A)</option>
+                <option value="1627759390" style="background-color:#ffffff">■ ALBUFEIRA DE SANTA LUZIA (R.E.) (13J/01A)</option>
+                <option value="1627759382" style="background-color:#ffffff">■ ALBUFEIRA DE SANTA ÁGUEDA (MARATECA) (14M/01A)</option>
+                <option value="1627743586" style="background-color:#ffffff">■ ALBUFEIRA DO CABRIL (R.E.) (14I/01A)</option>
+                <option value="7557137960" style="background-color:#ffffff">■ ALBUFEIRA DO CARRIL (16G/03A)</option>
+                <option value="1627752100" style="background-color:#ffffff">■ ALBUFEIRA DO DIVÔR (21J/01A)</option>
+                <option value="1627758658" style="background-color:#ffffff">■ ALBUFEIRA DO FRATEL (R.E.) (16K/02A)</option>
+                <option value="1627758764" style="background-color:#ffffff">■ ALBUFEIRA DO MARANHÃO (19J/01A)</option>
+                <option value="1627758876" style="background-color:#ffffff">■ ALBUFEIRA DO NEGRELINHO (16I/02A)</option>
+                <option value="1627758972" style="background-color:#ffffff">■ ALBUFEIRA DO PISCO (13L/02A)</option>
+                <option value="1627758980" style="background-color:#ffffff">■ ALBUFEIRA DO POIO (16L/01AE)</option>
+                <option value="1627743402" style="background-color:#ffffff">■ ALFERRAREDE (17I/01H)</option>
+                <option value="1627743404" style="background-color:#ffffff">■ ALGE (14H/02H)</option>
+                <option value="1627743410" style="background-color:#ffffff">■ ALMEIRIM (18F/02H)</option>
+                <option value="1627743414" style="background-color:#e3d679">■ ALMOUROL (17G/02H)</option>
+                <option value="1627743412" style="background-color:#ffffff">■ ALMOURÃO (15K/01H)</option>
+                <option value="1627743436" style="background-color:#ffffff">■ ALVEGA (17I/02H)</option>
+                <option value="10065708580" style="background-color:#ffffff">■ ATROZELA (R.E.) (21A/06H)</option>
+                <option value="1627743484" style="background-color:#ffffff">■ AZINHAGA (17F/04H)</option>
+                <option value="1627743362" style="background-color:#ffffff">■ AÇUDE DA BEZÁGUEDA (13O/02A)</option>
+                <option value="1627743368" style="background-color:#ffffff">■ AÇUDE DO FURADOURO (20H/01A)</option>
+                <option value="1627758678" style="background-color:#ffffff">■ AÇUDE DO GAMEIRO (20I/01A)</option>
+                <option value="1627743506" style="background-color:#ffffff">■ BARCO DO ZÊZERE (12L/01H)</option>
+                <option value="1627743508" style="background-color:#ffffff">■ BARQUINHA (17G/05H)</option>
+                <option value="1627743512" style="background-color:#ffffff">■ BARRAGEM DA BOUÇÃ (JUSANTE) (14H/03H)</option>
+                <option value="1627743514" style="background-color:#ffffff">■ BARRAGEM DA BOUÇÃ (MONTANTE) (14H/04H)</option>
+                <option value="1627743516" style="background-color:#ffffff">■ BARRAGEM DE CABRIL (14I/02H)</option>
+                <option value="1627743536" style="background-color:#ffffff">■ BEIRÃ (17N/01H)</option>
+                <option value="1627743550" style="background-color:#ffffff">■ BENAVENTE (20E/01H)</option>
+                <option value="1627743560" style="background-color:#ffffff">■ BOUÇÃ (14H/01H)</option>
+                <option value="1627743576" style="background-color:#ffffff">■ C.N.F.T - TORRES NOVAS (17F/01H)</option>
+                <option value="1627743580" style="background-color:#ffffff">■ CABEÇÃO (20I/03H)</option>
+                <option value="1627743656" style="background-color:#ffffff">■ CAIS DO CARREGADO (19D/03H)</option>
+                <option value="1627743664" style="background-color:#ffffff">■ CALHA DO GROU (19F/01H)</option>
+                <option value="1627743716" style="background-color:#ffffff">■ CASTANHEIRA (12M/01H)</option>
+                <option value="1627744828" style="background-color:#ffffff">■ CHAMUSCA (17G/08H)</option>
+                <option value="1627751874" style="background-color:#ffffff">■ CONSTÂNCIA (17G/01H)</option>
+                <option value="1627751886" style="background-color:#ffffff">■ COUTO DE ANDREIROS (18L/01H)</option>
+                <option value="1627752122" style="background-color:#ffffff">■ DOM JOÃO VEIROS (20M/01H)</option>
+                <option value="1627752796" style="background-color:#ffffff">■ ESCORREGA (16G/02H)</option>
+                <option value="1627752886" style="background-color:#ffffff">■ ESPADANAL (19D/02H)</option>
+                <option value="1627753084" style="background-color:#ffffff">■ ESTAÇÃO AGRONÓMICA NACIONAL (21B/02H)</option>
+                <option value="1627758616" style="background-color:#ffffff">■ FIGUEIRA E BARROS (19K/01H)</option>
+                <option value="1627758618" style="background-color:#ffffff">■ FIGUEIRÓ (R.E.) (16K/03H)</option>
+                <option value="1695334942" style="background-color:#ffffff">■ FOZ DO COBRÃO (R.E.) (15K/02H)</option>
+                <option value="1627758644" style="background-color:#ffffff">■ FOZ DO SEVER (16L/01H)</option>
+                <option value="1627758650" style="background-color:#ffffff">■ FOZ DO SOUTO (16H/01H)</option>
+                <option value="1627758606" style="background-color:#ffffff">■ FÁBRICA DA MATRENA (16G/01H)</option>
+                <option value="1627743370" style="background-color:#ffffff">■ GAMEIRO (20I/02H)</option>
+                <option value="1627758690" style="background-color:#ffffff">■ HERDADE DA DEFESA (21L/01H)</option>
+                <option value="1627758728" style="background-color:#ffffff">■ HORTA VELHA (21I/01H)</option>
+                <option value="1627758732" style="background-color:#ffffff">■ IDANHA-A-NOVA (14N/01H)</option>
+                <option value="1627759318" style="background-color:#ffffff">■ JUNÇÃO DAS RIBEIRAS (EX. QUINTA DO PISÃO) (21A/02H)</option>
+                <option value="1627758740" style="background-color:#ffffff">■ LAVEIRAS (21B/03H)</option>
+                <option value="1627758760" style="background-color:#ffffff">■ MANTEIGAS (11L/02H)</option>
+                <option value="1627758758" style="background-color:#ffffff">■ MANTEIGAS (R.E.) (11L/01H)</option>
+                <option value="1627758768" style="background-color:#ffffff">■ MATA FOME (18G/02H)</option>
+                <option value="1627758772" style="background-color:#ffffff">■ MEIMOA (12O/01H)</option>
+                <option value="1627758778" style="background-color:#ffffff">■ MERCÊS (21B/01H)</option>
+                <option value="1627758782" style="background-color:#ffffff">■ MINAS DA PANASQUEIRA (13K/01H)</option>
+                <option value="1627758792" style="background-color:#ffffff">■ MOINHO DO CARTUCHO (16H/02H)</option>
+                <option value="1627758802" style="background-color:#ffffff">■ MOINHO MAMA (21J/01H)</option>
+                <option value="1627758804" style="background-color:#ffffff">■ MOINHO NOVO (18I/01H)</option>
+                <option value="1627758814" style="background-color:#ffffff">■ MONFORTE (19M/01H)</option>
+                <option value="1627758824" style="background-color:#ffffff">■ MONTE CAMÕES (20I/01H)</option>
+                <option value="1627758858" style="background-color:#ffffff">■ MORGADO (19E/02H)</option>
+                <option value="1627758862" style="background-color:#ffffff">■ MOSEIRO (17F/06H)</option>
+                <option value="1627758864" style="background-color:#ffffff">■ MOUCHÃO DE SANTA MARTA (18E/05H)</option>
+                <option value="1627758886" style="background-color:#ffffff">■ NOSSA SENHORA DA GRAÇA (16K/05H)</option>
+                <option value="1627758914" style="background-color:#ffffff">■ OLHOS DE ÁGUA (17E/01H)</option>
+                <option value="1627758938" style="background-color:#ffffff">■ PAVIA (20I/04H)</option>
+                <option value="1627758950" style="background-color:#ffffff">■ PENEDOS DE ALENQUER (19C/01H)</option>
+                <option value="1627758964" style="background-color:#ffffff">■ PERNES CANAL (17F/05H)</option>
+                <option value="1627758992" style="background-color:#ffffff">■ PONTE ALENQUER (19C/03H)</option>
+                <option value="1627759000" style="background-color:#ffffff">■ PONTE ALVIELA (EN365) (18F/04H)</option>
+                <option value="1627759014" style="background-color:#ffffff">■ PONTE BARBANCHO (18E/06H)</option>
+                <option value="1627759018" style="background-color:#ffffff">■ PONTE BARNABÉ (19C/02H)</option>
+                <option value="1627759028" style="background-color:#ffffff">■ PONTE BROTAS (20H/02H)</option>
+                <option value="1627759032" style="background-color:#ffffff">■ PONTE CABRIL (14I/01H)</option>
+                <option value="1627759034" style="background-color:#ffffff">■ PONTE CADAFAIS (19D/06H)</option>
+                <option value="1627759042" style="background-color:#ffffff">■ PONTE CANAS (20C/01H)</option>
+                <option value="1627759046" style="background-color:#ffffff">■ PONTE CANHA (21F/01H)</option>
+                <option value="1627759050" style="background-color:#ffffff">■ PONTE CARDOSAS (20C/03H)</option>
+                <option value="1627759062" style="background-color:#ffffff">■ PONTE CHAMUSCA (17G/07H)</option>
+                <option value="1627759064" style="background-color:#ffffff">■ PONTE COINA (22C/03H)</option>
+                <option value="1627759070" style="background-color:#ffffff">■ PONTE CORUCHE (20F/02H)</option>
+                <option value="1627759072" style="background-color:#ffffff">■ PONTE COURAÇA (19D/05H)</option>
+                <option value="1627759074" style="background-color:#ffffff">■ PONTE CP MOITA (22D/01H)</option>
+                <option value="1627758984" style="background-color:#ffffff">■ PONTE DE ABRANTES (17H/03H)</option>
+                <option value="1627759082" style="background-color:#ffffff">■ PONTE ERRA (20G/01H)</option>
+                <option value="1627759090" style="background-color:#ffffff">■ PONTE FARGELA (21K/01H)</option>
+                <option value="1627759096" style="background-color:#ffffff">■ PONTE FREIRIA (18E/01H)</option>
+                <option value="1627759112" style="background-color:#ffffff">■ PONTE LIDO (AMADORA) (21B/05H)</option>
+                <option value="1627759120" style="background-color:#ffffff">■ PONTE MALVEIRA DA SERRA (21A/01H)</option>
+                <option value="1627759124" style="background-color:#ffffff">■ PONTE MEIMOA (12N/01H)</option>
+                <option value="1627759132" style="background-color:#ffffff">■ PONTE MIRAFLORES (21B/06H)</option>
+                <option value="1627759144" style="background-color:#ffffff">■ PONTE MUGE (19E/03H)</option>
+                <option value="1627759146" style="background-color:#ffffff">■ PONTE MUNHECA (14N/02H)</option>
+                <option value="1627759148" style="background-color:#ffffff">■ PONTE NOVA (17F/02H)</option>
+                <option value="1627759154" style="background-color:#ffffff">■ PONTE OTA (19D/04H)</option>
+                <option value="1627759156" style="background-color:#ffffff">■ PONTE PANASCO (17L/01H)</option>
+                <option value="1627759160" style="background-color:#ffffff">■ PONTE PEDRINHA (12M/02H)</option>
+                <option value="1627759170" style="background-color:#ffffff">■ PONTE PINHAL (21C/01H)</option>
+                <option value="1627759172" style="background-color:#ffffff">■ PONTE PISÃO (21A/03H)</option>
+                <option value="1627759184" style="background-color:#ffffff">■ PONTE PRECES (19C/04H)</option>
+                <option value="1627759204" style="background-color:#ffffff">■ PONTE RENOVA (16F/01H)</option>
+                <option value="1627759208" style="background-color:#ffffff">■ PONTE RESINGA (21C/02H)</option>
+                <option value="1627759212" style="background-color:#ffffff">■ PONTE RIBEIRA PERNES (17F/03H)</option>
+                <option value="1627759234" style="background-color:#ffffff">■ PONTE SANTARÉM (18E/02H)</option>
+                <option value="1627759236" style="background-color:#ffffff">■ PONTE SANTO ESTEVÃO (20E/02H)</option>
+                <option value="1627759250" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ VALHELHAS BRIDGE (11M/02H)</font></font></option>
+                <option value="1627759256" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ VILA FORMOSA BRIDGE (18K/01H)</font></font></option>
+                <option value="1627759264" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ ZAMBUJAL BRIDGE (20C/02H)</font></font></option>
+                <option value="1627759268" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ PORTO ALTO (20D/02H)</font></font></option>
+                <option value="1627759278" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ PORTO DA PALHA (19E/04H)</font></font></option>
+                <option value="1627759274" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ PORTO DAS FAIAS (19E/01H)</font></font></option>
+                <option value="1627759276" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ PORTO DO FREIXO (18F/01H)</font></font></option>
+                <option value="1627759294" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ PRACANA (16K/02H)</font></font></option>
+                <option value="1627759298" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ PRAIA DO RIBATEJO (17G/03H)</font></font></option>
+                <option value="1627759306" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ QUINTA DA CARDIGA (17G/06H)</font></font></option>
+                <option value="1627759304" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ QUINTA DAS CAMILAS (21A/04H)</font></font></option>
+                <option value="10065708582" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ QUINTA DO PISAO (RE) (21A/07H)</font></font></option>
+                <option value="1627759332" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ SHALLOW (17M/01H)</font></font></option>
+                <option value="1627759354" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ RIO MAIOR (RE) (17D/01H)</font></font></option>
+                <option value="1627759366" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ ROSMANINHAL (15O/01H)</font></font></option>
+                <option value="1627759392" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ SANTA MARGARIDA DO SABUGAL (5PM/1AM)</font></font></option>
+                <option value="1627759422" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ SAFE (15P/02H)</font></font></option>
+                <option value="1627759420" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ SAFE (RE) (15P/01H)</font></font></option>
+                <option value="1627759426" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ LADY OF THE ROCHA (21B/04H)</font></font></option>
+                <option value="1627759450" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ TANKS (17G/04H)</font></font></option>
+                <option value="1627759478" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ TRAMAGAL (17H/02H)</font></font></option>
+                <option value="1627759490" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ VALLEY OF FLOWERS (18G/03H)</font></font></option>
+                <option value="1627759500" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ VALLEY OF POSTIGOS (19F/02H)</font></font></option>
+                <option value="1627759518" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ VEIROS (20L/01H)</font></font></option>
+                <option value="1627759542" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ VILA FRANCA DE XIRA (20D/01H)</font></font></option>
+                <option value="1627759548" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ VILA VELHA DE RODÃO (16K/01H)</font></font></option>
+                <option value="1627758916" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ ÓMNIAS (SANTARÉM) (18E/04H)</font></font></option>
+              </select>
+
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="target_station"><strong>Target Station:</strong></label>
+          </div>
+          <!--<div class="form-group">
+            <label for="target_station_coordinates">Coordinates (X, Y in WGS84):</label>
+            <input type="text" id="coordinates" name="coordinates" placeholder="Enter coordinates">
+                      </div>-->
+          <div class="form-group">
+            <label for="target_station_sites">Sites:</label>
+            <!--<input type="text" name="target_station_sites" class="form-control" required>-->
+            <select id="f_estacoes" name="f_estacoes" class="form-control" style="visibility: visible;">
+							<option value="1627743352" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ ABRANTES LOPO (17H/04H)</font></font></option>
+							<option value="1627743380" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ AGROAL (15G/02H)</font></font></option>
+							<option value="1627743458" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ ALBUFEIRA DA APARTADURA (17M/01A)</font></font></option>
+							<option value="1627743562" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ ALBUFEIRA DA BOUÇÃ (RE) (14H/01A)</font></font></option>
+							<option value="1627743678" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ ALBUFEIRA DA CAPINHA (12M/01A)</font></font></option>
+							<option value="1627751888" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ ALBUFEIRA DA COVA DO VIRIATO (12L/02A)</font></font></option>
+							<option value="1627759292" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ ALBUFEIRA DA PRACANA (RE) (16K/01A)</font></font></option>
+							<option value="1627759474" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ ALBUFEIRA DA TOULICA (14O/01A)</font></font></option>
+							<option value="1627743544" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ ALBUFEIRA DE BELVER (RE) (17J/01A)</font></font></option>
+							<option value="1627743896" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ ALBUFEIRA DE CASTELO DE BODE (RE) (16H/01A)</font></font></option>
+							<option value="1627751876" style="background-color:#ffffff">■ ALBUFEIRA DE CORGAS (15J/01A)</option>
+							<option value="1627751890" style="background-color:#ffffff">■ ALBUFEIRA DE COVÃO DO FERRO (12L/01AE)</option>
+							<option value="1627751892" style="background-color:#ffffff">■ ALBUFEIRA DE COVÃO DO MEIO (R.E.) (13L/01AE)</option>
+							<option value="1627752558" style="background-color:#ffffff">■ ALBUFEIRA DE ESCARIGO (12N/01AE)</option>
+							<option value="1627758676" style="background-color:#ffffff">■ ALBUFEIRA DE GAFETE (17L/03A)</option>
+							<option value="1627758730" style="background-color:#ffffff">■ ALBUFEIRA DE IDANHA (14N/01A)</option>
+							<option value="1627758756" style="background-color:#ffffff">■ ALBUFEIRA DE MAGOS (20E/01A)</option>
+							<option value="1627758774" style="background-color:#ffffff">■ ALBUFEIRA DE MEIMOA (12O/01A)</option>
+							<option value="1627758784" style="background-color:#ffffff">■ ALBUFEIRA DE MINUTOS (R.E.) (22I/01A)</option>
+							<option value="1627758816" style="background-color:#ffffff">■ ALBUFEIRA DE MONTARGIL (19H/01A)</option>
+							<option value="1627758874" style="background-color:#ffffff">■ ALBUFEIRA DE NASCENTES (18K/02A)</option>
+							<option value="1627758936" style="background-color:#ffffff">■ ALBUFEIRA DE PATUDOS (18F/03A)</option>
+							<option value="1627758954" style="background-color:#ffffff">■ ALBUFEIRA DE PENHA GARCIA (13O/01A)</option>
+							<option value="1627759290" style="background-color:#ffffff">■ ALBUFEIRA DE PÓVOA E MEADAS (R.E.) (17L/01A)</option>
+							<option value="1627759390" style="background-color:#ffffff">■ ALBUFEIRA DE SANTA LUZIA (R.E.) (13J/01A)</option>
+							<option value="1627759382" style="background-color:#ffffff">■ ALBUFEIRA DE SANTA ÁGUEDA (MARATECA) (14M/01A)</option>
+							<option value="1627743586" style="background-color:#ffffff">■ ALBUFEIRA DO CABRIL (R.E.) (14I/01A)</option>
+							<option value="7557137960" style="background-color:#ffffff">■ ALBUFEIRA DO CARRIL (16G/03A)</option>
+							<option value="1627752100" style="background-color:#ffffff">■ ALBUFEIRA DO DIVÔR (21J/01A)</option>
+							<option value="1627758658" style="background-color:#ffffff">■ ALBUFEIRA DO FRATEL (R.E.) (16K/02A)</option>
+							<option value="1627758764" style="background-color:#ffffff">■ ALBUFEIRA DO MARANHÃO (19J/01A)</option>
+							<option value="1627758876" style="background-color:#ffffff">■ ALBUFEIRA DO NEGRELINHO (16I/02A)</option>
+							<option value="1627758972" style="background-color:#ffffff">■ ALBUFEIRA DO PISCO (13L/02A)</option>
+							<option value="1627758980" style="background-color:#ffffff">■ ALBUFEIRA DO POIO (16L/01AE)</option>
+							<option value="1627743402" style="background-color:#ffffff">■ ALFERRAREDE (17I/01H)</option>
+							<option value="1627743404" style="background-color:#ffffff">■ ALGE (14H/02H)</option>
+							<option value="1627743410" style="background-color:#ffffff">■ ALMEIRIM (18F/02H)</option>
+							<option value="1627743414" style="background-color:#e3d679">■ ALMOUROL (17G/02H)</option>
+							<option value="1627743412" style="background-color:#ffffff">■ ALMOURÃO (15K/01H)</option>
+							<option value="1627743436" style="background-color:#ffffff">■ ALVEGA (17I/02H)</option>
+							<option value="10065708580" style="background-color:#ffffff">■ ATROZELA (R.E.) (21A/06H)</option>
+							<option value="1627743484" style="background-color:#ffffff">■ AZINHAGA (17F/04H)</option>
+							<option value="1627743362" style="background-color:#ffffff">■ AÇUDE DA BEZÁGUEDA (13O/02A)</option>
+							<option value="1627743368" style="background-color:#ffffff">■ AÇUDE DO FURADOURO (20H/01A)</option>
+							<option value="1627758678" style="background-color:#ffffff">■ AÇUDE DO GAMEIRO (20I/01A)</option>
+							<option value="1627743506" style="background-color:#ffffff">■ BARCO DO ZÊZERE (12L/01H)</option>
+							<option value="1627743508" style="background-color:#ffffff">■ BARQUINHA (17G/05H)</option>
+							<option value="1627743512" style="background-color:#ffffff">■ BARRAGEM DA BOUÇÃ (JUSANTE) (14H/03H)</option>
+							<option value="1627743514" style="background-color:#ffffff">■ BARRAGEM DA BOUÇÃ (MONTANTE) (14H/04H)</option>
+							<option value="1627743516" style="background-color:#ffffff">■ BARRAGEM DE CABRIL (14I/02H)</option>
+							<option value="1627743536" style="background-color:#ffffff">■ BEIRÃ (17N/01H)</option>
+							<option value="1627743550" style="background-color:#ffffff">■ BENAVENTE (20E/01H)</option>
+							<option value="1627743560" style="background-color:#ffffff">■ BOUÇÃ (14H/01H)</option>
+							<option value="1627743576" style="background-color:#ffffff">■ C.N.F.T - TORRES NOVAS (17F/01H)</option>
+							<option value="1627743580" style="background-color:#ffffff">■ CABEÇÃO (20I/03H)</option>
+							<option value="1627743656" style="background-color:#ffffff">■ CAIS DO CARREGADO (19D/03H)</option>
+							<option value="1627743664" style="background-color:#ffffff">■ CALHA DO GROU (19F/01H)</option>
+							<option value="1627743716" style="background-color:#ffffff">■ CASTANHEIRA (12M/01H)</option>
+							<option value="1627744828" style="background-color:#ffffff">■ CHAMUSCA (17G/08H)</option>
+							<option value="1627751874" style="background-color:#ffffff">■ CONSTÂNCIA (17G/01H)</option>
+							<option value="1627751886" style="background-color:#ffffff">■ COUTO DE ANDREIROS (18L/01H)</option>
+							<option value="1627752122" style="background-color:#ffffff">■ DOM JOÃO VEIROS (20M/01H)</option>
+							<option value="1627752796" style="background-color:#ffffff">■ ESCORREGA (16G/02H)</option>
+							<option value="1627752886" style="background-color:#ffffff">■ ESPADANAL (19D/02H)</option>
+							<option value="1627753084" style="background-color:#ffffff">■ ESTAÇÃO AGRONÓMICA NACIONAL (21B/02H)</option>
+							<option value="1627758616" style="background-color:#ffffff">■ FIGUEIRA E BARROS (19K/01H)</option>
+							<option value="1627758618" style="background-color:#ffffff">■ FIGUEIRÓ (R.E.) (16K/03H)</option>
+							<option value="1695334942" style="background-color:#ffffff">■ FOZ DO COBRÃO (R.E.) (15K/02H)</option>
+							<option value="1627758644" style="background-color:#ffffff">■ FOZ DO SEVER (16L/01H)</option>
+							<option value="1627758650" style="background-color:#ffffff">■ FOZ DO SOUTO (16H/01H)</option>
+							<option value="1627758606" style="background-color:#ffffff">■ FÁBRICA DA MATRENA (16G/01H)</option>
+							<option value="1627743370" style="background-color:#ffffff">■ GAMEIRO (20I/02H)</option>
+							<option value="1627758690" style="background-color:#ffffff">■ HERDADE DA DEFESA (21L/01H)</option>
+							<option value="1627758728" style="background-color:#ffffff">■ HORTA VELHA (21I/01H)</option>
+							<option value="1627758732" style="background-color:#ffffff">■ IDANHA-A-NOVA (14N/01H)</option>
+							<option value="1627759318" style="background-color:#ffffff">■ JUNÇÃO DAS RIBEIRAS (EX. QUINTA DO PISÃO) (21A/02H)</option>
+							<option value="1627758740" style="background-color:#ffffff">■ LAVEIRAS (21B/03H)</option>
+							<option value="1627758760" style="background-color:#ffffff">■ MANTEIGAS (11L/02H)</option>
+							<option value="1627758758" style="background-color:#ffffff">■ MANTEIGAS (R.E.) (11L/01H)</option>
+							<option value="1627758768" style="background-color:#ffffff">■ MATA FOME (18G/02H)</option>
+							<option value="1627758772" style="background-color:#ffffff">■ MEIMOA (12O/01H)</option>
+							<option value="1627758778" style="background-color:#ffffff">■ MERCÊS (21B/01H)</option>
+							<option value="1627758782" style="background-color:#ffffff">■ MINAS DA PANASQUEIRA (13K/01H)</option>
+							<option value="1627758792" style="background-color:#ffffff">■ MOINHO DO CARTUCHO (16H/02H)</option>
+							<option value="1627758802" style="background-color:#ffffff">■ MOINHO MAMA (21J/01H)</option>
+							<option value="1627758804" style="background-color:#ffffff">■ MOINHO NOVO (18I/01H)</option>
+							<option value="1627758814" style="background-color:#ffffff">■ MONFORTE (19M/01H)</option>
+							<option value="1627758824" style="background-color:#ffffff">■ MONTE CAMÕES (20I/01H)</option>
+							<option value="1627758858" style="background-color:#ffffff">■ MORGADO (19E/02H)</option>
+							<option value="1627758862" style="background-color:#ffffff">■ MOSEIRO (17F/06H)</option>
+							<option value="1627758864" style="background-color:#ffffff">■ MOUCHÃO DE SANTA MARTA (18E/05H)</option>
+							<option value="1627758886" style="background-color:#ffffff">■ NOSSA SENHORA DA GRAÇA (16K/05H)</option>
+							<option value="1627758914" style="background-color:#ffffff">■ OLHOS DE ÁGUA (17E/01H)</option>
+							<option value="1627758938" style="background-color:#ffffff">■ PAVIA (20I/04H)</option>
+							<option value="1627758950" style="background-color:#ffffff">■ PENEDOS DE ALENQUER (19C/01H)</option>
+							<option value="1627758964" style="background-color:#ffffff">■ PERNES CANAL (17F/05H)</option>
+							<option value="1627758992" style="background-color:#ffffff">■ PONTE ALENQUER (19C/03H)</option>
+							<option value="1627759000" style="background-color:#ffffff">■ PONTE ALVIELA (EN365) (18F/04H)</option>
+							<option value="1627759014" style="background-color:#ffffff">■ PONTE BARBANCHO (18E/06H)</option>
+							<option value="1627759018" style="background-color:#ffffff">■ PONTE BARNABÉ (19C/02H)</option>
+							<option value="1627759028" style="background-color:#ffffff">■ PONTE BROTAS (20H/02H)</option>
+							<option value="1627759032" style="background-color:#ffffff">■ PONTE CABRIL (14I/01H)</option>
+							<option value="1627759034" style="background-color:#ffffff">■ PONTE CADAFAIS (19D/06H)</option>
+							<option value="1627759042" style="background-color:#ffffff">■ PONTE CANAS (20C/01H)</option>
+							<option value="1627759046" style="background-color:#ffffff">■ PONTE CANHA (21F/01H)</option>
+							<option value="1627759050" style="background-color:#ffffff">■ PONTE CARDOSAS (20C/03H)</option>
+							<option value="1627759062" style="background-color:#ffffff">■ PONTE CHAMUSCA (17G/07H)</option>
+							<option value="1627759064" style="background-color:#ffffff">■ PONTE COINA (22C/03H)</option>
+							<option value="1627759070" style="background-color:#ffffff">■ PONTE CORUCHE (20F/02H)</option>
+							<option value="1627759072" style="background-color:#ffffff">■ PONTE COURAÇA (19D/05H)</option>
+							<option value="1627759074" style="background-color:#ffffff">■ PONTE CP MOITA (22D/01H)</option>
+							<option value="1627758984" style="background-color:#ffffff">■ PONTE DE ABRANTES (17H/03H)</option>
+							<option value="1627759082" style="background-color:#ffffff">■ PONTE ERRA (20G/01H)</option>
+							<option value="1627759090" style="background-color:#ffffff">■ PONTE FARGELA (21K/01H)</option>
+							<option value="1627759096" style="background-color:#ffffff">■ PONTE FREIRIA (18E/01H)</option>
+							<option value="1627759112" style="background-color:#ffffff">■ PONTE LIDO (AMADORA) (21B/05H)</option>
+							<option value="1627759120" style="background-color:#ffffff">■ PONTE MALVEIRA DA SERRA (21A/01H)</option>
+							<option value="1627759124" style="background-color:#ffffff">■ PONTE MEIMOA (12N/01H)</option>
+							<option value="1627759132" style="background-color:#ffffff">■ PONTE MIRAFLORES (21B/06H)</option>
+							<option value="1627759144" style="background-color:#ffffff">■ PONTE MUGE (19E/03H)</option>
+							<option value="1627759146" style="background-color:#ffffff">■ PONTE MUNHECA (14N/02H)</option>
+							<option value="1627759148" style="background-color:#ffffff">■ PONTE NOVA (17F/02H)</option>
+							<option value="1627759154" style="background-color:#ffffff">■ PONTE OTA (19D/04H)</option>
+							<option value="1627759156" style="background-color:#ffffff">■ PONTE PANASCO (17L/01H)</option>
+							<option value="1627759160" style="background-color:#ffffff">■ PONTE PEDRINHA (12M/02H)</option>
+							<option value="1627759170" style="background-color:#ffffff">■ PONTE PINHAL (21C/01H)</option>
+							<option value="1627759172" style="background-color:#ffffff">■ PONTE PISÃO (21A/03H)</option>
+							<option value="1627759184" style="background-color:#ffffff">■ PONTE PRECES (19C/04H)</option>
+							<option value="1627759204" style="background-color:#ffffff">■ PONTE RENOVA (16F/01H)</option>
+							<option value="1627759208" style="background-color:#ffffff">■ PONTE RESINGA (21C/02H)</option>
+							<option value="1627759212" style="background-color:#ffffff">■ PONTE RIBEIRA PERNES (17F/03H)</option>
+							<option value="1627759234" style="background-color:#ffffff">■ PONTE SANTARÉM (18E/02H)</option>
+							<option value="1627759236" style="background-color:#ffffff">■ PONTE SANTO ESTEVÃO (20E/02H)</option>
+							<option value="1627759250" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ VALHELHAS BRIDGE (11M/02H)</font></font></option>
+							<option value="1627759256" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ VILA FORMOSA BRIDGE (18K/01H)</font></font></option>
+							<option value="1627759264" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ ZAMBUJAL BRIDGE (20C/02H)</font></font></option>
+							<option value="1627759268" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ PORTO ALTO (20D/02H)</font></font></option>
+							<option value="1627759278" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ PORTO DA PALHA (19E/04H)</font></font></option>
+							<option value="1627759274" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ PORTO DAS FAIAS (19E/01H)</font></font></option>
+							<option value="1627759276" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ PORTO DO FREIXO (18F/01H)</font></font></option>
+							<option value="1627759294" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ PRACANA (16K/02H)</font></font></option>
+							<option value="1627759298" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ PRAIA DO RIBATEJO (17G/03H)</font></font></option>
+							<option value="1627759306" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ QUINTA DA CARDIGA (17G/06H)</font></font></option>
+							<option value="1627759304" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ QUINTA DAS CAMILAS (21A/04H)</font></font></option>
+							<option value="10065708582" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ QUINTA DO PISAO (RE) (21A/07H)</font></font></option>
+							<option value="1627759332" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ SHALLOW (17M/01H)</font></font></option>
+							<option value="1627759354" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ RIO MAIOR (RE) (17D/01H)</font></font></option>
+							<option value="1627759366" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ ROSMANINHAL (15O/01H)</font></font></option>
+							<option value="1627759392" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ SANTA MARGARIDA DO SABUGAL (5PM/1AM)</font></font></option>
+							<option value="1627759422" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ SAFE (15P/02H)</font></font></option>
+							<option value="1627759420" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ SAFE (RE) (15P/01H)</font></font></option>
+							<option value="1627759426" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ LADY OF THE ROCHA (21B/04H)</font></font></option>
+							<option value="1627759450" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ TANKS (17G/04H)</font></font></option>
+							<option value="1627759478" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ TRAMAGAL (17H/02H)</font></font></option>
+							<option value="1627759490" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ VALLEY OF FLOWERS (18G/03H)</font></font></option>
+							<option value="1627759500" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ VALLEY OF POSTIGOS (19F/02H)</font></font></option>
+							<option value="1627759518" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ VEIROS (20L/01H)</font></font></option>
+							<option value="1627759542" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ VILA FRANCA DE XIRA (20D/01H)</font></font></option>
+							<option value="1627759548" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ VILA VELHA DE RODÃO (16K/01H)</font></font></option>
+							<option value="1627758916" style="background-color:#ffffff"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ ÓMNIAS (SANTARÉM) (18E/04H)</font></font></option>
+		        </select>
+          </div>
+          <b>Parameters</b>
+          <select id="f_estacoes_parametros" name="f_estacoes_parametros" size="8" multiple="multiple" class="form-control" style="visibility: visible;">
+            <option value="4092"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ Annual maximum instantaneous flow</font></font></option>
+            <option value="1850"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ Average daily flow</font></font></option>
+            <option value="1849"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ Monthly flow</font></font></option>
+            <option value="1843"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ Instantaneous water level</font></font></option>
+            <option value="436115734"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ Annual maximum instantaneous level</font></font></option>
+            <option value="1845"><font style="vertical-align: inherit;"><font style="vertical-align: inherit;">■ Average daily level</font></font></option>
+          </select>
+          <button class="btn btn-primary prev-step">Previous</button>
+          <button class="btn btn-primary next-step">Next</button>
+          <button id="show_table_button" class="btn btn-secondary">Show Table</button>
+          <div id="table_container"></div>
+
+        </div>
+       <style>
+  .form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 16px;
+  }
+
+  .form-group input[type="text"],
+  .form-group input[type="number"],
+  .form-group input[type="date"] {
+    width: 100%;
+    padding: 5px;
+    font-size: 16px;
+    margin-bottom: 10px;
+  }
+
+  .form-check-label {
+    display: inline-block;
+    margin-right: 10px;
+    font-size: 16px;
+  }
+
+  element.style {
+    border: 1px solid black;
+    padding: 10px;
+    width: 232px;
+}
+</style>
+
+
+ 
+<div class="step" data-step="2">
+  <!-- Start Date -->
+  <div class="row">
+    <div class="col-md-3">
+      <div class="form-group">
+        <div class="form-group" style="border: 1px solid black; padding: 10px;">
+          <label for="
+          start_date_str">Start Date:</label>
+          <input  id="start_date_str" name="start_date_str" value='01/10/1979 00:00' required>
+
+          <label for="end_date_str">End Date:</label>
+          <input  id="end_date_str" name="end_date_str" value='20/02/2023 00:00' required>
+
+          <button id="plotButtonsBefore">Plot1</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-8">
+      <div id='divChartBefore'></div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-3">
+      <div class="form-group">
+        <div class="form-group" style="border: 1px solid black; padding: 10px;">
+
+          <label for="filling_type">Approach for filling Missing Values:</label>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="filling_type" value="interpolate" required checked>
+            <label class="form-check-label" for="interpolate">By Interpolate</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="filling_type" value="bfill" required>
+            <label class="form-check-label" for="bfill">By Bfill</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="filling_type" value="ffill" required>
+            <label class="form-check-label" for="ffill">By Ffill</label>
+          </div>
+          <div class="form-check">
+            <input class="form-check-input" type="radio" name="filling_type" value="mean" required>
+            <label class="form-check-label" for="mean">By Mean</label>
+          </div>
+          <div class="form-group">    
+            <button id="plotButtonsAfter">Plot2</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-8">
+      <div id='divChartAfter'></div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="form-group" style="border: 1px solid black; padding: 10px;">
+
+    <label for="past_history">Number of past days:</label>
+    <input type="number" name="past_history" class="form-control" value=10 required>
+ 
+
+    <label for="n_step">Number of days for forecasting:</label>
+    <input type="number" name="n_step" class="form-control" value=1 required>
+  
+
+    <label for="STEP">Step size:</label>
+    <input type="number" name="STEP" class="form-control" value=1 required>
+ 
+
+    <label for="train_percentage">Percentage for Training (%):</label>
+    <input type="number" name="train_percentage" min=0 max=100 step=0.01 value=20 class="form-control" required>
+
+    <label for="indices1">Input Column :</label>
+    <input type="text" id="indices1" name="indices1" value=1 required>
+    
+    <label for="indices2">Output Column :</label>
+    <input type="number" id="indices2" name="indices2" value=1 required>
+    <button id="plotpreprocessing">Plot3</button>
+    <div class="col-md-8">
+      <div id='divChartpre'></div>
+    </div>
+
+  </div>
+ </div>
+  
+
+
+
+
+
+
+
+  <script>
+
+    // Add event listener to the "Show Table" button
+    document.getElementById("plotButtonsBefore").addEventListener("click", function(e) {
+      // Get the combined dataset HTML from the server
+      e.preventDefault()
+      $("#divChartBefore").html('<p>Loading, please wait...</p>')
+      $("#divChartBefore").css("max-height","")
+      $("#divChartBefore").css("overflow-y","")
+      $("#divChartBefore").css("overflow-x","")
+      fetch('/allsteps_preprocessing_data_before')
+        .then(response => response.text())
+        .then(html => {
+          // Display the combined dataset table in the table container
+          //$("#loading_status").hide()
+          //document.getElementById("divChartBefore").innerHTML = html;
+          if (html.indexOf('Django')>0){
+            $("#divChartBefore").html('<p>Error! </p>')
+            
+          }
+          else{
+            $("#divChartBefore").html(html)
+            $("#divChartBefore").css("max-height","400px")
+            $("#divChartBefore").css("overflow-y","scroll")
+            $("#divChartBefore").css("overflow-x","scroll")
+          }
+        })
+        .catch(error => {
+          $("#divChartBefore").html('<p>Error! '+error+'</p>')
+          
+          console.error('Error:', error);
+        });
+    });
+
+    document.getElementById("plotButtonsAfter").addEventListener("click", function(e) {
+      // Get the combined dataset HTML from the server
+      e.preventDefault()
+      $("#divChartAfter").html('<p>Loading, please wait...</p>')
+      $("#divChartAfter").css("max-height","")
+      $("#divChartAfter").css("overflow-y","")
+      $("#divChartAfter").css("overflow-x","")
+      fetch('/allsteps_preprocessing_data_after')
+        .then(response => response.text())
+        .then(html => {
+          // Display the combined dataset table in the table container
+          //$("#loading_status").hide()
+          //document.getElementById("divChartAfter").innerHTML = html;
+          if (html.indexOf('Django')>0){
+            $("#divChartAfter").html('<p>Error! </p>')
+            
+          }
+          else{
+            $("#divChartAfter").html(html)
+            $("#divChartAfter").css("max-height","400px")
+            $("#divChartAfter").css("overflow-y","scroll")
+            $("#divChartAfter").css("overflow-x","scroll")
+          }
+        })
+        .catch(error => {
+          $("#divChartAfter").html('<p>Error! '+error+'</p>')
+          
+          console.error('Error:', error);
+        });
+    });
+    
+    document.getElementById("plotpreprocessing").addEventListener("click", function(e) {
+  e.preventDefault();
+
+  // Fetching values of input fields
+  var pastHistory = document.getElementsByName('past_history')[0].value;
+  var nStep = document.getElementsByName('n_step')[0].value;
+  var stepSize = document.getElementsByName('STEP')[0].value;
+  var trainPercentage = document.getElementsByName('train_percentage')[0].value;
+  var indices1 = document.getElementById('indices1').value;
+  var indices2 = document.getElementById('indices2').value;
+
+  var payload = {
+    'past_history': pastHistory,
+    'n_step': nStep,
+    'STEP': stepSize,
+    'train_percentage': trainPercentage,
+    'indices1': indices1,
+    'indices2': indices2
+  };
+
+  console.log(payload);
+
+  // Display loading message
+  $("#divChartpre").html('<p>Loading, please wait...</p>');
+  $("#divChartpre").css("max-height", "");
+  $("#divChartpre").css("overflow-y", "");
+  $("#divChartpre").css("overflow-x", "");
+
+  fetch('/allsteps_preprocessing_data_split/', {
+    method: "POST",
+    headers: {
+      "X-CSRFToken": '{{csrf_token}}',
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  })
+  .then(response => response.text())
+  .then(html => {
+    // Display the combined dataset table in the table container
+    //$("#loading_status").hide()
+    //document.getElementById("divChartpre").innerHTML = html;
+    if (html.indexOf('Django')>0){
+      $("#divChartpre").html('<p>Error! </p>')
+      
+    }
+    else{
+      $("#divChartpre").html(html)
+      $("#divChartpre").css("max-height","400px")
+      $("#divChartpre").css("overflow-y","scroll")
+      $("#divChartpre").css("overflow-x","scroll")
+    }
+  })
+  .catch(error => {
+    $("#divChartpre").html('<p>Error! '+error+'</p>')
+    
+    console.error('Error:', error);
+  });
+});
+
+
+
+
+
+
+  </script>
+
+  <div class="btn-group" role="group" aria-label="Form navigation buttons">
+    <button type="button" class="btn btn-secondary prev-step">Previous</button>
+    <button type="button" class="btn btn-primary next-step">Next</button>
+  </div>
+</div>
+
+        
+        <div class="step" data-step="3">
+          <div class="form-group">
+            <label for="algorithm_type">Type of Algorithm:</label>
+            <select name="algorithm_type" class="form-control" required>
+              <option value="lstm">LSTM</option>
+              <option value="mlp">MLP</option>
+              <option value="gru">GRU</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="num_epochs">Number of Epochs:</label>
+            <input type="number" name="num_epochs" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label for="num_neurons">Number of Neurons:</label>
+            <input type="number" name="num_neurons" class="form-control" required>
+          </div>
+          <div class="form-group">
+            <label for="batch_size">Batch Size:</label>
+            <input type="number" name="batch_size" class="form-control" required>
+          </div>
+          <button class="btn btn-primary prev-step">Previous</button>
+          <button class="btn btn-primary next-step">Next</button>
+        </div>
+
+        <div class="progress-container">
+          <div class="progress">
+            <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuemin="0"
+              aria-valuemax="100"></div>
+          </div>
+        </div>
+      </form>
+  
+      {% if combined_dataset %}
+      <div id="table_wrapper">
+        <button id="show_table_button" class="btn btn-secondary">Show Table</button>
+        <div id="table_container"></div>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+
+
+
+<script>
+ // Add event listener to the "Show Table" button
+document.getElementById("show_table_button").addEventListener("click", function(e) {
+  // Get the combined dataset HTML from the server
+  e.preventDefault()
+  document.getElementById('show_table_button').style.display = 'none';
+
+  //check if has selected input stations
+  if ($('#f_estacoes_input').val().length==0){
+    alert('Please select at least one input station.')
+    document.getElementById('show_table_button').style.display = '';
+    $("#loading_status").hide()
+  }
+  else if ($('#f_estacoes_parametros').val().length==0){
+    alert('Please select at least one parameter.')
+    document.getElementById('show_table_button').style.display = '';
+    $("#loading_status").hide()
+  }
+  else{
+    $("#loading_status").show()
+    $("#loading_status").removeClass('alert-danger').removeClass('alert-success').addClass('alert-warning')
+    $("#loading_status").html('<p>Loading, please wait...</p>')
+    $("#table_container").css("max-height","")
+    $("#table_container").css("overflow-y","")
+    $("#table_container").css("overflow-x","")
+    //check if has selected parameters
+    _query = '?'
+    _query += 'target_station_sites='+$('#f_estacoes').val()+'&'
+    _query += 'input_station_sites_list='+$('#f_estacoes_input').val()+'&'
+    _query += 'params='+$('#f_estacoes_parametros').val()+''//+'&'
+    fetch('/get_combined_dataset'+_query)
+      .then(response => response.text())
+      .then(html => {
+        // Display the combined dataset table in the table container
+        //$("#loading_status").hide()
+        document.getElementById("table_container").innerHTML = html;
+        if (html.indexOf('Django')>0){
+          $("#loading_status").html('<p>Error! </p>')
+          $("#loading_status").removeClass('alert-warning').addClass('alert-danger')
+          document.getElementById('show_table_button').style.display = '';
+          //document.getElementById('table_container').innerHTML = '{{ combined_dataset }}';
+        }
+        else{
+          $("#loading_status").html('<p>Success!</p>')
+          $("#loading_status").removeClass('alert-warning').addClass('alert-success')
+          $("#table_container").css("max-height","400px")
+          $("#table_container").css("overflow-y","scroll")
+          $("#table_container").css("overflow-x","scroll")
+          //document.getElementById('table_container').innerHTML = '{{ combined_dataset }}';
+          document.getElementById('show_table_button').style.display = '';
+        }
+      })
+      .catch(error => {
+        $("#loading_status").html('<p>Error! '+error+'</p>')
+        $("#loading_status").removeClass('alert-warning').addClass('alert-danger')
+        console.error('Error:', error);
+        document.getElementById('show_table_button').style.display = '';
+      });
+  }    
+});
+
+
+
+
+</script>
+
+  <script>
+    // JavaScript code to handle the button click event and show the table
+    
+    /*document.getElementById('show_table_button').addEventListener('click', function() {
+      document.getElementById('show_table_button').style.display = 'none';
+      document.getElementById('table_container').innerHTML = '{{ combined_dataset }}';
+    });*/
+  </script>
+
+
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+  <script>
+    // JavaScript code for multistep form
+    $(document).ready(function () {
+      var currentStep = 0;
+      var steps = $(".step");
+      var progressBar = $(".progress-bar");
+
+      showStep(currentStep);
+
+      $(".next-step").click(function () {
+        if (validateStep(currentStep)) {
+          currentStep++;
+          showStep(currentStep);
+        }
+      });
+
+      $(".prev-step").click(function () {
+        currentStep--;
+        showStep(currentStep);
+      });
+
+      $("#step-bar li a").click(function () {
+        currentStep = $(this).data("step");
+        showStep(currentStep);
+      });
+
+      function showStep(stepIndex) {
+        steps.removeClass("active");
+        steps.filter("[data-step='" + stepIndex + "']").addClass("active");
+
+        $("#step-bar li").removeClass("active");
+        $("#step-bar li a").removeClass("active");
+        $("#step-bar li").eq(stepIndex).addClass("active");
+        $("#step-bar li a").eq(stepIndex).addClass("active");
+
+        var progressPercentage = ((stepIndex + 1) / steps.length) * 100;
+        progressBar.css("width", progressPercentage + "%");
+      }
+
+      function validateStep(stepIndex) {
+        // Add your validation logic here
+        return true;
+      }
+    });
+
+    // JavaScript code for dynamic addition of input stations
+    var inputStationsContainer = document.getElementById("input_stations_container");
+    var addStationButton = document.getElementById("add_input_station_button");
+    var stationCount = 0;
+
+   
+  </script>
+
+</body>
+
+</html>
