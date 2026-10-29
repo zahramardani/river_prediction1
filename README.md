@@ -44,3 +44,29 @@ python manage.py runserver 127.0.0.1:8000
 Use `.venv\Scripts\activate` on Windows. These are the local setup steps, not a claim that every workflow has been validated. Read [SETUP.md](docs/SETUP.md) for the prototype's known limitations.
 
 Python bytecode caches are excluded from source control. The original database, CSVs and ZIP archive remain available at their existing paths.
+
+
+<!-- BEGIN FOLDER GUIDE -->
+## Folder guide
+
+The earlier Django web prototype for station-data retrieval, tables and preprocessing views.
+
+[Repository overview](README.md) · [All projects](https://github.com/zahramardani/ML2PP-Artifacts/blob/main/PROJECTS.md)
+
+### Contents
+
+| Item | What it is |
+|---|---|
+| [docs/](docs/) | Setup instructions, dependency notes and descriptions of the earlier web prototype. |
+| [prediction/](prediction/) | The Django application containing deployment metadata, station-data views, example datasets, migrations and page templates. |
+| [river_prediction/](river_prediction/) | Project-wide Django settings, URL routing and ASGI/WSGI entry points. This Python package is separate from the prediction application. |
+| [.gitignore](.gitignore) | Patterns excluding local caches, environments or generated outputs from new commits. |
+| [db.sqlite3](db.sqlite3) | The historical SQLite database snapshot already in the repository. |
+| [manage.py](manage.py) | Django command-line entry point. |
+| [requirements.txt](requirements.txt) | Python dependency list for this component. |
+| [resampled_dataset.csv](resampled_dataset.csv) | The resampled CSV output already deposited with the prototype. |
+| [river_prediction2.zip](river_prediction2.zip) | The historical source archive deposited with the Django prototype. |
+
+**Start here:** [manage.py](manage.py).
+
+<!-- END FOLDER GUIDE -->
