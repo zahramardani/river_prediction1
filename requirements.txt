@@ -1,0 +1,7 @@
+# Inferred from active imports; original dependency versions are unavailable.
+Django
+pandas
+numpy
+requests
+matplotlib
+scikit-learn
