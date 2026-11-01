@@ -5,6 +5,34 @@ A historical Django prototype for selecting hydrological stations, retrieving SN
 **Author:** Zahra Mardani Korani  
 [All projects](https://github.com/zahramardani/ML2PP-Artifacts/blob/main/PROJECTS.md) · [Setup and current limitations](docs/SETUP.md)
 
+
+## Application workflow
+
+The prototype explores a browser-based workflow for preparing hydrological time series:
+
+1. Specify station identifiers and a parameter for a SNIRH data request.
+2. Retrieve station records and display an HTML table.
+3. Filter the date range and inspect plots before preprocessing.
+4. Apply a selected missing-value treatment and inspect the resulting series.
+5. Prepare historical windows and display the chronological training/test split.
+
+### Implementation map
+
+| Component | Responsibility |
+|---|---|
+| Django views | Data retrieval, preparation and response rendering |
+| pandas and NumPy | Tabular transformations and supervised windows |
+| Matplotlib | Plots embedded in HTML responses |
+| Django model and migration | Deployment metadata schema |
+| HTML templates | Form, table and plot presentation |
+
+This snapshot exposes data-preparation routes. LSTM, GRU and MLP helper functions are present, but their Keras imports are disabled and the URL configuration does not expose a completed model-training endpoint.
+
+### Review findings
+
+The application currently keeps datasets in module-level variables, uses fixed preprocessing dates and requires a specific order of requests. The root form's POST handler calls a retrieval function that reads GET parameters. The SNIRH request also lacks an explicit timeout. These are concrete integration tasks for a future functional revision; the current setup guide explains the prototype boundary.
+
+
 ## Which river repository is this?
 
 | Repository | Purpose |
@@ -44,29 +72,3 @@ python manage.py runserver 127.0.0.1:8000
 Use `.venv\Scripts\activate` on Windows. These are the local setup steps, not a claim that every workflow has been validated. Read [SETUP.md](docs/SETUP.md) for the prototype's known limitations.
 
 Python bytecode caches are excluded from source control. The original database, CSVs and ZIP archive remain available at their existing paths.
-
-
-<!-- BEGIN FOLDER GUIDE -->
-## Folder guide
-
-The earlier Django web prototype for station-data retrieval, tables and preprocessing views.
-
-[Repository overview](README.md) · [All projects](https://github.com/zahramardani/ML2PP-Artifacts/blob/main/PROJECTS.md)
-
-### Contents
-
-| Item | What it is |
-|---|---|
-| [docs/](docs/) | Setup instructions, dependency notes and descriptions of the earlier web prototype. |
-| [prediction/](prediction/) | The Django application containing deployment metadata, station-data views, example datasets, migrations and page templates. |
-| [river_prediction/](river_prediction/) | Project-wide Django settings, URL routing and ASGI/WSGI entry points. This Python package is separate from the prediction application. |
-| [.gitignore](.gitignore) | Patterns excluding local caches, environments or generated outputs from new commits. |
-| [db.sqlite3](db.sqlite3) | The historical SQLite database snapshot already in the repository. |
-| [manage.py](manage.py) | Django command-line entry point. |
-| [requirements.txt](requirements.txt) | Python dependency list for this component. |
-| [resampled_dataset.csv](resampled_dataset.csv) | The resampled CSV output already deposited with the prototype. |
-| [river_prediction2.zip](river_prediction2.zip) | The historical source archive deposited with the Django prototype. |
-
-**Start here:** [manage.py](manage.py).
-
-<!-- END FOLDER GUIDE -->
